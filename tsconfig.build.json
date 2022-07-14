@@ -22,9 +22,8 @@
     "incremental": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false,
-    
+    "useUnknownInCatchVariables": false
   },
-  "include": ["./apps"],
+  "include": ["./apps", "*/.ts", "*/.tsx", ".eslintrc.js"],
   "exclude": ["node_modules", "dist", "build", "lib"]
 }
