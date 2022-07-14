@@ -23,7 +23,7 @@ module.exports = {
     sourceType: 'module',
     project: ['./tsconfig.build.json'],
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
     'prettier/prettier': 'error',
     'class-methods-use-this': 0,
@@ -33,9 +33,11 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 0,
     '@typescript-eslint/no-unsafe-argument': 0,
     'import/extensions': [
-      'error',
+      2,
       'ignorePackages',
       {
+        js: 'never',
+        jsx: 'never',
         ts: 'never',
         tsx: 'never',
       },
@@ -56,10 +58,27 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
     'react/require-default-props': 'off',
+
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.js',
+          '**/*.spec.js',
+          '**/*.test.ts',
+          '**/*.spec.ts',
+        ],
+      },
+    ],
   },
   settings: {
     'import/resolver': {
-      typescript: {},
+      typescript: {
+        directory: './tsconfig.build.json',
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
     },
   },
 };
