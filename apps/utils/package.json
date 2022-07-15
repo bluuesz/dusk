@@ -1,0 +1,8 @@
+{
+  "name": "@dusk/utils",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv-safe": "^8.2.0"
+  }
+}

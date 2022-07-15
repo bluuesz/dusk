@@ -1,0 +1,1 @@
+export { dotenvConfig } from './env';
