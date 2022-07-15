@@ -30,9 +30,9 @@ describe('dusk-program', () => {
   it('Send donate', async () => {
     const donate = anchor.web3.Keypair.generate();
 
-    const amount = new anchor.BN(2 * LAMPORTS_PER_SOL);
-
     const message = 'Alo, g?3?X? x x';
+
+    const amount = new anchor.BN(2 * LAMPORTS_PER_SOL);
 
     await program.methods
       .sendDonate(message, amount)
@@ -54,11 +54,16 @@ describe('dusk-program', () => {
       new PublicKey(feeAddress)
     );
 
+    console.log({
+      streamerBalance,
+      feeBalance,
+    });
+
     const donateAccount = await program.account.donate.fetch(donate.publicKey);
 
-    assert.equal(feeBalance / LAMPORTS_PER_SOL, 0.04);
-    assert.equal(streamerBalance / LAMPORTS_PER_SOL, 1.96);
     assert.equal(donateAccount.message, message);
+    assert.equal(streamerBalance / LAMPORTS_PER_SOL, 1.96);
+    assert.equal(feeBalance / LAMPORTS_PER_SOL, 0.04);
   });
 
   it('Send donate with another wallet', async () => {
@@ -88,13 +93,8 @@ describe('dusk-program', () => {
       streamerAddress.publicKey
     );
 
-    const feeBalance = await program.provider.connection.getBalance(
-      new PublicKey(feeAddress)
-    );
-
     const donateAccount = await program.account.donate.fetch(donate.publicKey);
 
-    assert.equal(feeBalance / LAMPORTS_PER_SOL, 0.1);
     assert.equal(streamerBalance / LAMPORTS_PER_SOL, 4.9);
     assert.equal(donateAccount.message, message);
   });
