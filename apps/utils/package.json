@@ -1,8 +1,14 @@
 {
   "name": "@dusk/utils",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.ts",
   "dependencies": {
-    "dotenv-safe": "^8.2.0"
+    "@project-serum/anchor": "^0.25.0",
+    "@solana/web3.js": "^1.48.0",
+    "dotenv-safe": "^8.2.0",
+    "winston": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/winston": "^2.4.4"
   }
 }

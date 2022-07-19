@@ -7,5 +7,16 @@ services:
       - "dusk:/usr/local/etc/redis/redis.conf"
     ports:
       - "6379:6379"
+
+  mongodb:
+    image: mongo:4
+    environment:
+      MONGO_INITDB_DATABASE: dusk
+      MONGO_INITDB_ROOT_USERNAME: dusk
+      MONGO_INITDB_ROOT_PASSWORD: dev123
+    ports:
+      - '27017:27017'
+    volumes:
+      - dusk:/data/db
 volumes:
   dusk:

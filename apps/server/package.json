@@ -1,0 +1,21 @@
+{
+  "name": "@server/api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@dusk/utils": "^1.0.0",
+    "@project-serum/anchor": "^0.25.0",
+    "@solana/web3.js": "^1.48.0",
+    "bullmq": "^1.86.7",
+    "dotenv-safe": "^8.2.0",
+    "express": "^4.18.1",
+    "mongoose": "^6.4.4"
+  },
+  "devDependencies": {
+    "@types/dotenv-safe": "^8.1.2"
+  },
+  "scripts": {
+    "dev": "ts-node-dev --no-notify --transpile-only src/index.ts",
+    "start-worker-donate": "ts-node-dev --no-notify --transpile-only src/startWorkerDonate.ts"
+  }
+}

@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import { PublicKey, Keypair } from '@solana/web3.js';
-import { bullQueue } from '../bullQueue';
+import { getProgram } from '@dusk/utils';
+import { bullmq } from '../jobs';
 import { connection } from '../config/connection';
 import { DuskProgram, IDL } from '../idl/types/dusk_program';
-import { getProgram } from '../utils/getProgram';
 
 export const onProgramAccountChange = (programId: PublicKey) => {
   const leakedKp = Keypair.fromSecretKey(
@@ -24,13 +25,26 @@ export const onProgramAccountChange = (programId: PublicKey) => {
     nodeWallet
   );
 
-  const queue = bullQueue();
+  const job = bullmq('Donate');
 
-  connection.onProgramAccountChange(programId, (account) =>
-    queue.add('new-donate', {
+  connection.onProgramAccountChange(programId, (account) => {
+    const {
+      user: userAddress,
+      amount,
+      timestamps,
+      streamerAddress,
+      message,
+    } = program.coder.accounts.decode('donate', account.accountInfo.data);
+
+    // add new donate to queue to be proccessed by workers
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    job.queue().add('new-donate', {
       accountId: account.accountId.toBase58(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: program.coder.accounts.decode('donate', account.accountInfo.data),
-    })
-  );
+      userAddress,
+      amount: amount.toNumber(),
+      timestamps: timestamps.toNumber(),
+      streamerAddress,
+      message,
+    });
+  });
 };
