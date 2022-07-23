@@ -1,7 +1,5 @@
 use anchor_lang::prelude::*;
 
-pub const VAULT_PDA_SEED: &[u8] = b"streamer-vault";
-
 #[account]
 pub struct Vault {
   pub streamer: Pubkey,

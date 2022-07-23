@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 
+use crate::constants::*;
 use crate::state::*;
 
 pub fn handler(ctx: Context<InitVault>) -> Result<()> {

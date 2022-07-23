@@ -3,6 +3,7 @@ use instructions::*;
 
 declare_id!("STmfvCbGpVhf68bLjG61RQPEVVtmG4Ge6MNLt9PwFHc");
 
+pub mod constants;
 pub mod instructions;
 pub mod state;
 
