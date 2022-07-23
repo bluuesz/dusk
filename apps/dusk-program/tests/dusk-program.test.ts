@@ -3,7 +3,7 @@ import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { assert } from 'chai';
 import { DuskProgram } from '../target/types/dusk_program';
 import { fundWallet } from '../utils/fund-wallet';
@@ -206,12 +206,21 @@ describe('dusk-program', () => {
       program.programId
     );
 
+    const coinTokenAccount = await getAssociatedTokenAddress(
+      coinMint,
+      new PublicKey('DUSKgsaeBadJm8Pc8hQsXitkZUyU8Wz2u6BS18YrBxFY')
+    );
+
     await program.methods
       .createCoin(vaultAuthorityBump, 'G3X Coin')
       .accounts({
         authority: vaultAuthority,
         coinAccount: coinAcc,
         coinMint,
+        duskWallet: new PublicKey(
+          'DUSKgsaeBadJm8Pc8hQsXitkZUyU8Wz2u6BS18YrBxFY'
+        ),
+        coinTokenAccount,
         streamer: payer.publicKey,
         systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
@@ -223,6 +232,14 @@ describe('dusk-program', () => {
       .rpc();
 
     const coin = await program.provider.connection.getTokenSupply(coinMint);
+    const duskTokenAccountBalance =
+      await program.provider.connection.getTokenAccountBalance(
+        coinTokenAccount
+      );
+
+    console.log({
+      duskTokenAccountBalance,
+    });
 
     assert.equal(coin.value.decimals, 5);
   });
