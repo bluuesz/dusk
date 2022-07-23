@@ -5,6 +5,7 @@ import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/toke
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from '@solana/web3.js';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { assert } from 'chai';
+import { DUSK_WALLET_ADDRESS } from '@dusk/utils';
 import { DuskProgram } from '../target/types/dusk_program';
 import { fundWallet } from '../utils/fund-wallet';
 
@@ -208,7 +209,7 @@ describe('dusk-program', () => {
 
     const coinTokenAccount = await getAssociatedTokenAddress(
       coinMint,
-      new PublicKey('DUSKgsaeBadJm8Pc8hQsXitkZUyU8Wz2u6BS18YrBxFY')
+      DUSK_WALLET_ADDRESS
     );
 
     await program.methods
@@ -217,9 +218,7 @@ describe('dusk-program', () => {
         authority: vaultAuthority,
         coinAccount: coinAcc,
         coinMint,
-        duskWallet: new PublicKey(
-          'DUSKgsaeBadJm8Pc8hQsXitkZUyU8Wz2u6BS18YrBxFY'
-        ),
+        duskWallet: DUSK_WALLET_ADDRESS,
         coinTokenAccount,
         streamer: payer.publicKey,
         systemProgram: SystemProgram.programId,
