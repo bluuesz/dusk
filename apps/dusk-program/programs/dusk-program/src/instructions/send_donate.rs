@@ -1,6 +1,8 @@
 use crate::state::*;
 use anchor_lang::prelude::*;
 
+use crate::constants::*;
+
 impl<'info> SendDonate<'info> {
   fn send_donate(&self, amount: u64) -> Result<()> {
     let fee_address = &self.fee_address;

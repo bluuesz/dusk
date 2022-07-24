@@ -1,8 +1,11 @@
 /* eslint-disable no-console */
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
+import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from '@solana/web3.js';
+import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { assert } from 'chai';
+import { DUSK_WALLET_ADDRESS } from '@dusk/utils';
 import { DuskProgram } from '../target/types/dusk_program';
 import { fundWallet } from '../utils/fund-wallet';
 
@@ -155,5 +158,88 @@ describe('dusk-program', () => {
     ]);
 
     assert.equal(donates.length, 1);
+  });
+
+  it('init vault', async () => {
+    const [vault, vaultBump] = await PublicKey.findProgramAddress(
+      [Buffer.from('vault-streamer-account'), payer.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .initVault()
+      .accounts({
+        vault,
+        streamer: payer.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([payer])
+      .rpc();
+
+    const vaultAccount = await program.account.vault.fetch(vault);
+
+    assert.ok(vaultAccount.streamer.toBase58(), payer.publicKey.toBase58());
+  });
+
+  it('create coin', async () => {
+    const [vault, vaultBump] = await PublicKey.findProgramAddress(
+      [Buffer.from('vault-streamer-account'), payer.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [vaultAuthority, vaultAuthorityBump] =
+      await PublicKey.findProgramAddress(
+        [
+          Buffer.from('streamer-vault'),
+          vault.toBuffer(),
+          payer.publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+
+    const [coinAcc] = await PublicKey.findProgramAddress(
+      [Buffer.from('streamer-coin-acc'), payer.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const [coinMint] = await PublicKey.findProgramAddress(
+      [Buffer.from('streamer-coin-mint'), payer.publicKey.toBuffer()],
+      program.programId
+    );
+
+    const coinTokenAccount = await getAssociatedTokenAddress(
+      coinMint,
+      DUSK_WALLET_ADDRESS
+    );
+
+    await program.methods
+      .createCoin(vaultAuthorityBump, 'G3X Coin')
+      .accounts({
+        authority: vaultAuthority,
+        coinAccount: coinAcc,
+        coinMint,
+        duskWallet: DUSK_WALLET_ADDRESS,
+        coinTokenAccount,
+        streamer: payer.publicKey,
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        vault,
+      })
+      .signers([payer])
+      .rpc();
+
+    const coin = await program.provider.connection.getTokenSupply(coinMint);
+    const duskTokenAccountBalance =
+      await program.provider.connection.getTokenAccountBalance(
+        coinTokenAccount
+      );
+
+    console.log({
+      duskTokenAccountBalance,
+    });
+
+    assert.equal(coin.value.decimals, 5);
   });
 });
