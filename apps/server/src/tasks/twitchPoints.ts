@@ -13,11 +13,9 @@ import { getStreamersOnline } from '../services/twitch/getStreamersOnline';
 // every minute
 const CRON = '* * * * *';
 
-// need know loyalty config / streamer
-
 interface ChattersData {
   streamer: string;
-  pointsPerMinutes: number; // default
+  pointsPerMinutes: number;
   solanaAddress: string;
   chatters: Chatters;
   chattersCount: number;
