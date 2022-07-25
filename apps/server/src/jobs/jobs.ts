@@ -7,7 +7,6 @@ const bullmq = (queueName: string) => {
       connection: {
         host: 'localhost',
         port: 6379,
-        // password: 'ac57347f931f4bf9bbd36601ce277a0c',
       },
     });
 
@@ -16,7 +15,6 @@ const bullmq = (queueName: string) => {
       connection: {
         host: 'localhost',
         port: 6379,
-        // password: 'ac57347f931f4bf9bbd36601ce277a0c',
       },
     });
 

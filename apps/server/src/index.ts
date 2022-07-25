@@ -15,6 +15,7 @@ const waitMongoDB = () =>
 waitMongoDB()
   .then(() => {
     logger.info('MongoDB connected \n');
+
     logger.info('Listening onProgramAccountChange');
     onProgramAccountChange(new PublicKey(process.env.PROGRAM_ID!));
   })
