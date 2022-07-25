@@ -13,6 +13,8 @@ pub struct Donate {
   pub user: Pubkey,
   pub streamer_address: Pubkey,
 
+  pub username: Option<String>,
+
   pub message: String,
 
   // token used for donation
