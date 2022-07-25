@@ -19,11 +19,13 @@ const DonateSchema = new mongoose.Schema<Donate>(
     },
     userAddress: {
       type: String,
+      ref: 'User',
       required: true,
     },
     streamerAddress: {
       type: String,
-      required: false,
+      ref: 'User',
+      required: true,
     },
     message: {
       type: String,
@@ -44,5 +46,9 @@ const DonateSchema = new mongoose.Schema<Donate>(
 );
 
 const DonateModel = mongoose.model<Donate>('Donate', DonateSchema);
+
+export const create = (donate: Partial<Donate>) => DonateModel.create(donate);
+export const findByStreamerAddress = (streamerAddress: string) =>
+  DonateModel.find({ streamerAddress: { _eq: streamerAddress } });
 
 export default DonateModel;
