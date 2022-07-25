@@ -10,11 +10,12 @@ const LoyaltySchema = new mongoose.Schema<Loyalty>(
   {
     pointsPerMinute: {
       type: Number,
+      default: 10,
       required: true,
     },
     streamer: {
       type: String,
-      ref: 'User',
+      unique: true,
       required: true,
     },
   },
@@ -28,5 +29,8 @@ const LoyaltySchema = new mongoose.Schema<Loyalty>(
 );
 
 const LoyaltyModel = mongoose.model<Loyalty>('Loyalty', LoyaltySchema);
+
+export const findStreamerLoyaltyConfigBySolanaAddress = (streamer: string) =>
+  LoyaltyModel.findOne({ streamer: { _eq: streamer } });
 
 export default LoyaltyModel;

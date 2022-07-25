@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema<User>(
     },
     solanaAddress: {
       type: String,
-      required: false,
+      required: true,
       unique: true,
     },
     twitchId: {
@@ -44,6 +44,8 @@ const UserModel = mongoose.model<User>('User', UserSchema);
 
 export const findStreamerBySolanaAddress = (address: string) =>
   UserModel.findOne({ solanaAddress: { _eq: address }, isStreamer: true });
+export const findStreamerByUsername = (username: string) =>
+  UserModel.findOne({ username: { _eq: username }, isStreamer: true });
 export const findStreamers = () => UserModel.find({ isStreamer: true });
 
 export default UserModel;

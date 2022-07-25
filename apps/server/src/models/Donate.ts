@@ -19,12 +19,10 @@ const DonateSchema = new mongoose.Schema<Donate>(
     },
     userAddress: {
       type: String,
-      ref: 'User',
       required: true,
     },
     streamerAddress: {
       type: String,
-      ref: 'User',
       required: true,
     },
     message: {

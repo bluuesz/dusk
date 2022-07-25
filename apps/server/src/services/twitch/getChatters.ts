@@ -1,13 +1,15 @@
 import { request } from '@dusk/utils';
 
-interface Chatters {
+export interface Chatters {
+  broadcaster: string[];
+  viewers: string[];
+}
+interface ChattersResponse {
   chatter_count: number;
-  chatters: {
-    broadcaster: string[];
-
-    viewers: string[];
-  };
+  chatters: Chatters;
 }
 
 export const getChatters = (username: string) =>
-  request<Chatters>(`http://tmi.twitch.tv/group/user/${username}/chatters`);
+  request<ChattersResponse>(
+    `http://tmi.twitch.tv/group/user/${username}/chatters`
+  );
