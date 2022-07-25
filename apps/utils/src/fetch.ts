@@ -1,11 +1,18 @@
-import fetch from 'node-fetch';
+import fetch, { HeadersInit, BodyInit } from 'node-fetch';
 
-const request = async <T>(endpoint: string /* method: 'POST' | 'GET' */) => {
+const request = async <T>(
+  endpoint: string,
+  method?: 'POST' | 'GET',
+  headers?: HeadersInit,
+  body?: BodyInit
+) => {
   const response = await fetch(endpoint, {
-    method: 'GET',
+    method: method || 'GET',
     headers: {
       'Content-Type': 'application/json',
+      ...headers,
     },
+    body,
   });
 
   if (!response.ok) {
