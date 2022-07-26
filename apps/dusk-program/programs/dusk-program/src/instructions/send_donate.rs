@@ -41,7 +41,12 @@ impl<'info> SendDonate<'info> {
   }
 }
 
-pub fn handler(ctx: Context<SendDonate>, message: String, amount: u64) -> Result<()> {
+pub fn handler(
+  ctx: Context<SendDonate>,
+  message: String,
+  amount: u64,
+  username: Option<String>,
+) -> Result<()> {
   let donate = &mut ctx.accounts.donate;
   let user = &ctx.accounts.payer;
 
@@ -53,6 +58,10 @@ pub fn handler(ctx: Context<SendDonate>, message: String, amount: u64) -> Result
     return Err(DonateErrorCode::MessageTooLong.into());
   }
 
+  match username {
+    Some(username) => donate.username = Some(username),
+    None => donate.username = None,
+  }
   donate.message = message;
   donate.user = user.key();
   donate.timestamps = clock.unix_timestamp;

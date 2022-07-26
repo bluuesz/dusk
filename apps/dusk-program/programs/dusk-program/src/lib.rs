@@ -19,8 +19,13 @@ pub mod dusk_program {
     instructions::init_vault::handler(ctx)
   }
 
-  pub fn send_donate(ctx: Context<SendDonate>, message: String, amount: u64) -> Result<()> {
-    instructions::send_donate::handler(ctx, message, amount)
+  pub fn send_donate(
+    ctx: Context<SendDonate>,
+    message: String,
+    amount: u64,
+    username: Option<String>,
+  ) -> Result<()> {
+    instructions::send_donate::handler(ctx, message, amount, username)
   }
 
   pub fn create_coin(ctx: Context<CreateCoin>, bump_authority: u8, name: String) -> Result<()> {

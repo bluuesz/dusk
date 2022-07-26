@@ -30,7 +30,7 @@ describe('dusk-program', () => {
     console.log('Your transaction signature', tx);
   });
 
-  it('Send donate', async () => {
+  it('Send donate without username', async () => {
     const donate = anchor.web3.Keypair.generate();
 
     const message = 'Alo, g?3?X? x x';
@@ -38,7 +38,7 @@ describe('dusk-program', () => {
     const amount = new anchor.BN(2 * LAMPORTS_PER_SOL);
 
     await program.methods
-      .sendDonate(message, amount)
+      .sendDonate(message, amount, null)
       .accounts({
         donate: donate.publicKey,
         feeAddress,
@@ -65,8 +65,49 @@ describe('dusk-program', () => {
     const donateAccount = await program.account.donate.fetch(donate.publicKey);
 
     assert.equal(donateAccount.message, message);
+    assert.equal(donateAccount.username, null);
     assert.equal(streamerBalance / LAMPORTS_PER_SOL, 1.96);
     assert.equal(feeBalance / LAMPORTS_PER_SOL, 0.04);
+  });
+
+  it('Send donate with username', async () => {
+    const donate = anchor.web3.Keypair.generate();
+
+    const message = 'Alo, g?3?X? x x';
+
+    const amount = new anchor.BN(2 * LAMPORTS_PER_SOL);
+
+    await program.methods
+      .sendDonate(message, amount, 'bluuesz')
+      .accounts({
+        donate: donate.publicKey,
+        feeAddress,
+        payer: payer.publicKey,
+        streamerAddress: streamerAddress.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([payer, donate])
+      .rpc();
+
+    const streamerBalance = await program.provider.connection.getBalance(
+      streamerAddress.publicKey
+    );
+
+    const feeBalance = await program.provider.connection.getBalance(
+      new PublicKey(feeAddress)
+    );
+
+    console.log({
+      streamerBalance,
+      feeBalance,
+    });
+
+    const donateAccount = await program.account.donate.fetch(donate.publicKey);
+
+    assert.equal(donateAccount.message, message);
+    assert.equal(donateAccount.username, 'bluuesz');
+    assert.equal(streamerBalance / LAMPORTS_PER_SOL, 3.92);
+    assert.equal(feeBalance / LAMPORTS_PER_SOL, 0.08);
   });
 
   it('Send donate with another wallet', async () => {
@@ -81,7 +122,7 @@ describe('dusk-program', () => {
     const message = 'message';
 
     await program.methods
-      .sendDonate(message, amount)
+      .sendDonate(message, amount, null)
       .accounts({
         donate: donate.publicKey,
         feeAddress,
@@ -98,7 +139,7 @@ describe('dusk-program', () => {
 
     const donateAccount = await program.account.donate.fetch(donate.publicKey);
 
-    assert.equal(streamerBalance / LAMPORTS_PER_SOL, 4.9);
+    assert.equal(streamerBalance / LAMPORTS_PER_SOL, 6.86);
     assert.equal(donateAccount.message, message);
   });
 
@@ -113,7 +154,7 @@ describe('dusk-program', () => {
 
     try {
       await program.methods
-        .sendDonate(message, amount)
+        .sendDonate(message, amount, null)
         .accounts({
           donate: donate.publicKey,
           feeAddress: feeAddressWrong.publicKey,
@@ -131,7 +172,7 @@ describe('dusk-program', () => {
   it('get all donates', async () => {
     const donates = await program.account.donate.all();
 
-    assert.equal(donates.length, 2);
+    assert.equal(donates.length, 3);
   });
 
   it('get donations received by streamer', async () => {
@@ -144,7 +185,7 @@ describe('dusk-program', () => {
       },
     ]);
 
-    assert.equal(donates.length, 2);
+    assert.equal(donates.length, 3);
   });
 
   it('get donations send by user', async () => {
@@ -157,7 +198,7 @@ describe('dusk-program', () => {
       },
     ]);
 
-    assert.equal(donates.length, 1);
+    assert.equal(donates.length, 2);
   });
 
   it('init vault', async () => {
