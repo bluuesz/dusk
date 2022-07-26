@@ -1,15 +1,14 @@
 import { logger } from '@dusk/utils';
-import { worker } from './jobs';
-import { Donate } from './models/Donate';
+import { worker } from '../jobs';
+import { Donate } from '../models/Donate';
 
 interface DonateWorkerData {
   accountId: string;
   accountInfo: Donate;
 }
 
-const startWorkerDonate = () =>
+export const startWorkerDonate = () =>
   worker<DonateWorkerData>('Donate', (job) =>
+    // send event to frontend and then show the donate
     logger.info(JSON.stringify(job.data))
   );
-
-startWorkerDonate();
